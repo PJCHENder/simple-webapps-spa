@@ -2,12 +2,15 @@
   <div id="app">
     <img src="./assets/logo.png">
     <router-view></router-view>
+    <alert></alert>
   </div>
 </template>
 
 <script>
+import Alert from '@/components/alert.vue'
 export default {
-  name: 'app'
+  name: 'app',
+  components: { Alert }
 }
 </script>
 

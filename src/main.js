@@ -5,6 +5,8 @@ import Vuex from 'vuex'
 import App from './App'
 import router from './router'
 import storeOption from './vuex/store'
+import '@/assets/javascript/application.js'
+import '@/assets/stylesheet/application.scss'
 
 /**
  * Use Vuex

@@ -6,17 +6,46 @@ function generate (name) {
   }
 }
 
-const options = {
-  // 多页面共享数据
+const alertModule = {
   state: {
-    message: ''
+    alert: {
+      title: null,
+      content: null,
+      active: false
+    }
+  },
+  mutations: {
+    'emit/Alert': function (state, value) {
+      state.alert.active = true
+      state.alert.title = value
+    },
+    'reset/Alert': function (state, value) {
+      state.alert.active = false
+      state.alert.content = null
+      state.alert.title = null
+    }
+  }
+}
+
+const options = {
+  strict: true,
+  // 共享數據
+  state: {
+
   },
 
   // 操作
   actions: {},
 
-  // 数据变更
-  mutations: {}
+  // 數據變更
+  mutations: {
+
+  },
+
+  modules: {
+    alertModule
+  }
+
 }
 
 // 为每个 state 字段生成对应的 mutations 方法
