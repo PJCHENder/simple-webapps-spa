@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
@@ -17,7 +19,19 @@ const store = new Vuex.Store(storeOption)
 
 Vue.config.productionTip = false
 
-/* eslint-disable no-new */
+/**
+ * facebook sdk
+**/
+;(function(d, s, id){
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/zh_TW/sdk.js";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+
+
 new Vue({
   el: '#app',
   router,

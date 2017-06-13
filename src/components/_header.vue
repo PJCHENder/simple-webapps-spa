@@ -1,0 +1,123 @@
+<template>
+  <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+    <button class="navbar-toggler navbar-toggler-right" type="button" aria-label="Toggle navigation"
+      @click="showNav"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="#">Navbar</a>
+
+    <div class="navbar-collapse"
+      v-show="navActive">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Link</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#">Disabled</a>
+        </li>
+      </ul>
+      <button 
+      class="btn btn-sm btn-outline-success col-1 login"
+      v-if="!authorized" 
+      @click="login">Login</button>
+      <button
+      class="btn btn-sm btn-outline-success col-1 logout"
+      v-else
+      @click="logout" >Logout</button>
+    </div>
+  </nav>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      profile: {},
+      authorized: false,
+      navActive: false
+    }
+  },
+  methods:{
+    showNav () {
+      this.navActive = !this.navActive
+    },
+    /**
+     * Facebook SDK for Login
+    **/
+    getProfile () {
+      let vm = this
+      FB.api('/me?fields=name,id,email', function (response) {
+        vm.$set(vm, 'profile', response)
+      })
+    },
+    login () {
+      let vm = this
+      FB.login(function (response) {
+        vm.statusChangeCallback(response) 
+      }, {
+        scope: 'email, public_profile',
+        return_scopes: true
+      })
+    },
+    logout () {
+      let vm = this
+      FB.logout(function (response) {
+        vm.statusChangeCallback(response)
+      })
+    },
+    statusChangeCallback (response) {
+      let vm = this
+      if (response.status === 'connected') {
+        vm.authorized = true
+        vm.$store.commit('emit/Flash', "登入成功")
+        vm.getProfile()
+      } else if (response.status === 'not_authorized') {
+        vm.$store.commit('emit/Flash', "尚未授權本應用程式")
+        vm.authorized = false
+      } else if (response.status === 'unknown') {
+        vm.$store.commit('emit/Flash', "登出成功")
+        vm.profile = {}
+        vm.authorized = false
+      } else {
+        vm.$store.commit('emit/Flash', "尚未登入")
+        vm.authorized = false
+      }
+    }
+  },
+  mounted () {
+    let vm = this
+
+    // facebook 初始化
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId: '664195880445424',
+        cookie: true,
+        xfbml: true,
+        version: 'v2.9'
+      });
+      FB.AppEvents.logPageView();
+
+      // Get FB Login Status
+      FB.getLoginStatus(response => {
+        vm.statusChangeCallback(response)
+      })
+    };
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+  button{
+    cursor: pointer;
+  }
+
+  // .collapse-enter-active, .collapse-leave, .collapse-enter-to{
+  //   height: 100%;
+
+  // }
+
+</style>

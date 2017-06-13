@@ -7,7 +7,7 @@
 
 <script>
   import {mapState} from 'vuex'
-  import cTitle from '@/components/title'
+  import cTitle from '@/components/_title.vue'
 
   export default {
     data () {

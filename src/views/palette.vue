@@ -29,7 +29,6 @@
 </template>
  
 <script>
-
 import hexToHsl from 'hex-to-hsl'
 
 let colorPalette = [

@@ -12,6 +12,10 @@ const alertModule = {
       title: null,
       content: null,
       active: false
+    },
+    flash: {
+      title: null,
+      active: false
     }
   },
   mutations: {
@@ -23,6 +27,16 @@ const alertModule = {
       state.alert.active = false
       state.alert.content = null
       state.alert.title = null
+    },
+    'emit/Flash': function (state, value) {
+      state.flash.active = true
+      state.flash.title = value
+      console.log('get emit/Flash')
+    },
+    'reset/Flash': function (state, value) {
+      state.flash.active = false
+      state.flash.title = null
+      console.log('get reset/Flash')
     }
   }
 }

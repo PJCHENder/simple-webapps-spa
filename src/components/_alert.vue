@@ -1,9 +1,19 @@
 <template>
-  <div class="modal-container" v-show="active" @wheel.stop.prevent="">
-    <div class="alert-container">
-      <div class="alert-title">{{title}}</div>
-      <div class="alert-content"> {{content}}</div>
-      <button class="confirm-button" @click="confirm">OK</button>
+  <div>
+    <transition name="flash">
+      <div class="flash col-3 alert alert-success text-center" role="alert" 
+        v-show="flash.title">
+        {{ flash.title }}
+      </div>
+    </transition>
+    <div class="modal-container" 
+      v-show="alert.active" 
+      @wheel.stop.prevent="">
+      <div class="alert-container">
+        <div class="alert-title"> {{ alert.title }} </div>
+        <div class="alert-content"> {{ alert.content }}</div>
+        <button class="confirm-button" @click="confirm">OK</button>
+      </div>
     </div>
   </div>
 </template>
@@ -12,24 +22,31 @@
   export default {
     name: "alert",
     computed: {
-      active () {
-        return this.$store.state.alertModule.alert.active
+      alert () {
+        return {
+          active: this.$store.state.alertModule.alert.active,
+          title: this.$store.state.alertModule.alert.title,
+          content: this.$store.state.alertModule.alert.content
+        }
       },
-      title () {
-        return this.$store.state.alertModule.alert.title
-      },
-      content () {
-        return this.$store.state.alertModule.alert.content
+      flash () {
+        if (this.$store.state.alertModule.flash.active) {
+          setTimeout(this.disappearFlash, 1000)
+          console.log('setTimeout')
+        }
+        return {
+          active: this.$store.state.alertModule.flash.active,
+          title: this.$store.state.alertModule.flash.title,
+        }
       }
     },
     methods: {
-      showBasicAlert(){
-        this.alert.title = "Hello SweetAlert2"
-        this.alert.content = " Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt maiores aliquid fugit dolor, sapiente laboriosam! Culpa porro, hic voluptatem eum ipsa ratione rem libero. Cupiditate eos aut ad sint, repellat."
-        this.alert.active = true
-      },
-      confirm(){
+      confirm () {
          this.$store.commit('reset/Alert')
+      },
+      disappearFlash () {
+        console.log('disappearFlash')
+        this.$store.commit('reset/Flash')
       }
     }
   }
@@ -39,6 +56,36 @@
 <style lang="scss" scoped>
 
 $font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+/**
+ * flash is used to show temporary message
+**/
+.flash{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  position: fixed;
+  top: 10px;
+  right: 50px;
+  z-index: 5;
+  min-height: 60px;
+  line-height: 60px;
+}
+
+// 進場後的畫面
+.flash-enter-active, .flash-leave, .flash-enter-to{
+  transition: all 0.3s; 
+  opacity: 1;
+}
+
+// 退場後的畫面
+.flash-enter, .flash-leave-active,  .flash-leave-to{   
+  opacity: 0;    
+  transition: all 1s;
+}
+
+
+
 /**
  * style here is forked from SweetAlert2
 **/

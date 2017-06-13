@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <header-partial></header-partial>
     <img src="./assets/logo.png">
     <router-view></router-view>
     <alert></alert>
@@ -7,10 +8,12 @@
 </template>
 
 <script>
-import Alert from '@/components/alert.vue'
+import Alert from '@/components/_alert.vue'
+import HeaderPartial from '@/components/_header.vue'
+
 export default {
   name: 'app',
-  components: { Alert }
+  components: { Alert,  HeaderPartial}
 }
 </script>
 
@@ -21,6 +24,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
