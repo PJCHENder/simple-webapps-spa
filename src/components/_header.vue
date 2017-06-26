@@ -33,34 +33,64 @@
 </template>
 
 <script>
+import request from 'superagent'
+
+let endpoint = 'http://localhost:3000/v1.0'
+
 export default {
   data () {
     return {
       profile: {},
       authorized: false,
-      navActive: false
+      navActive: false,
     }
   },
   methods:{
     showNav () {
       this.navActive = !this.navActive
     },
+    getTokenFromServer () {
+      let vm = this
+      request.post(endpoint + '/users/login')
+      .send({
+        input_token: vm.profile.authResponse.accessToken,
+        facebookId: vm.profile.id,
+        email: vm.profile.email,
+        name: vm.profile.name
+      })
+      .type('application/json')
+      .end((err, res) => {
+        if (err) {
+          console.error(err)
+        }
+        let response = JSON.parse(res.text)
+        /**
+         * If get token successfully, save in localStorage
+         **/
+        if (response.token) {
+          localStorage.setItem('token', response.token)
+        }
+      })
+    },
     /**
      * Facebook SDK for Login
     **/
-    getProfile () {
+    getProfile (authResponse) {
       let vm = this
-      FB.api('/me?fields=name,id,email', function (response) {
+      // FB.api('/me?fields=name,id,email', function (response) {
+      FB.api('/me', 'get', {fields: 'name,id,email'}, function (response) {
         vm.$set(vm, 'profile', response)
+        vm.profile = Object.assign({}, {authResponse}, vm.profile)
+        vm.getTokenFromServer()
       })
     },
     login () {
       let vm = this
       FB.login(function (response) {
-        vm.statusChangeCallback(response) 
+        vm.statusChangeCallback(response)
       }, {
         scope: 'email, public_profile',
-        return_scopes: true
+        return_scopes: true,
       })
     },
     logout () {
@@ -74,7 +104,7 @@ export default {
       if (response.status === 'connected') {
         vm.authorized = true
         vm.$store.commit('emit/Flash', "登入成功")
-        vm.getProfile()
+        vm.getProfile(response.authResponse)
       } else if (response.status === 'not_authorized') {
         vm.$store.commit('emit/Flash', "尚未授權本應用程式")
         vm.authorized = false

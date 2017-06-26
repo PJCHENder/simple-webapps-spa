@@ -31,12 +31,10 @@ const alertModule = {
     'emit/Flash': function (state, value) {
       state.flash.active = true
       state.flash.title = value
-      console.log('get emit/Flash')
     },
     'reset/Flash': function (state, value) {
       state.flash.active = false
       state.flash.title = null
-      console.log('get reset/Flash')
     }
   }
 }
@@ -62,7 +60,7 @@ const options = {
 
 }
 
-// 为每个 state 字段生成对应的 mutations 方法
+// 為每个 state 字段生成对应的 mutations 方法
 Object.keys(options.state).forEach((key) => {
   options.mutations[key] = generate(key)
 })

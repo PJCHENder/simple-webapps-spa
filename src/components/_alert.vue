@@ -1,7 +1,7 @@
 <template>
   <div>
     <transition name="flash">
-      <div class="flash col-3 alert alert-success text-center" role="alert" 
+      <div class="flash alert alert-success text-center" role="alert" 
         v-show="flash.title">
         {{ flash.title }}
       </div>
@@ -32,7 +32,6 @@
       flash () {
         if (this.$store.state.alertModule.flash.active) {
           setTimeout(this.disappearFlash, 1000)
-          console.log('setTimeout')
         }
         return {
           active: this.$store.state.alertModule.flash.active,
@@ -42,12 +41,11 @@
     },
     methods: {
       confirm () {
-         this.$store.commit('reset/Alert')
+        this.$store.commit('reset/Alert')
       },
       disappearFlash () {
-        console.log('disappearFlash')
         this.$store.commit('reset/Flash')
-      }
+      },
     }
   }
 </script>
@@ -61,27 +59,28 @@ $font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
  * flash is used to show temporary message
 **/
 .flash{
-  padding: 0;
+  padding: 0 10px;
   margin: 0;
   box-sizing: border-box;
   position: fixed;
-  top: 10px;
+  top: 20px;
   right: 50px;
   z-index: 5;
-  min-height: 60px;
-  line-height: 60px;
+  min-height: 50px;
+  line-height: 50px;
+  // min-width: 100px;
 }
 
 // 進場後的畫面
 .flash-enter-active, .flash-leave, .flash-enter-to{
-  transition: all 0.3s; 
+  transition: all 0.3s;
   opacity: 1;
 }
 
 // 退場後的畫面
 .flash-enter, .flash-leave-active,  .flash-leave-to{   
-  opacity: 0;    
-  transition: all 1s;
+  opacity: 0;
+  transition: all -.3s;
 }
 
 
@@ -90,26 +89,26 @@ $font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
  * style here is forked from SweetAlert2
 **/
 .modal-container {
-    background-color: rgba(0, 0, 0, .4);
-    overflow-y: auto;
-    transition: background .1s;
-    padding: 10px;
-    z-index: 1060;
-    /**
-     * Center elements inside .modal-container
-    **/
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  background-color: rgba(0, 0, 0, .4);
+  overflow-y: auto;
+  transition: 'background' .1s;
+  padding: 10px;
+  z-index: 1060;
+  /**
+    * Center elements inside .modal-container
+  **/
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    /**
-     * To fill the whole screen 
-    **/
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
+  /**
+    * To fill the whole screen 
+  **/
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }
 
 .alert-container {
