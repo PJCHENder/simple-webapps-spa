@@ -6,20 +6,18 @@
 </template>
 
 <script>
-  import {mapState} from 'vuex'
+  // import {mapState} from 'vuex'
   import cTitle from '@/components/_title.vue'
 
   export default {
     data () {
       return {
-        title: 'ERROR!',
+        title: '404 Not Found!',
+        message: '404 Not Found!'
       }
     },
-    computed: mapState([
-      'message'
-    ]),
     mounted: function () {
-      this.$store.commit('message', '404 Not Found！');
+      this.$store.commit('emit/Alert', "404 Not Found！")
     },
     components: {cTitle}
   }

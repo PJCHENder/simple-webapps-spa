@@ -1,10 +1,10 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <h2>Web Apps</h2>
+    <h1>Current Web Apps Provided</h1>
     <ul>
-      <router-link to="/palette">Palette</router-link>
+      <li><router-link to="/palette">Palette</router-link></li>
     </ul>
+    <!--
     <h2>Essential Links</h2>
     <ul>
       <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
@@ -21,6 +21,7 @@
       <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
       <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
     </ul>
+    -->
   </div>
 </template>
 
@@ -29,19 +30,20 @@ export default {
   name: 'hello',
   data () {
     return {
-      msg: 'Welcome to Simple Webapps'
+
     }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style lang="scss" scoped>
 .hello {
-  margin-top: 60px;
+  margin-top: 50px;
 }
 h1, h2 {
   font-weight: normal;
+  margin-bottom: 40px;
 }
 
 ul {
@@ -52,6 +54,7 @@ ul {
 li {
   display: inline-block;
   margin: 0 10px;
+  font-size: 1.5rem;
 }
 
 a {

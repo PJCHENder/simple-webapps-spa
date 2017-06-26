@@ -5,27 +5,24 @@
     >
       <span class="navbar-toggler-icon"></span>
     </button>
-    <a class="navbar-brand" href="#">Navbar</a>
+    <a class="navbar-brand" href="#">Simple WebApps</a>
 
     <div class="navbar-collapse"
       v-show="navActive">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        <li class="nav-item">
+          <a class="nav-link" href="https://pjchender.blogspot.com" target="_blank">Blog</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#">Disabled</a>
+          <a class="nav-link" href="https://www.facebook.com/pjchender/" target="_blank">Facebook</a>
         </li>
       </ul>
       <button 
-      class="btn btn-sm btn-outline-success col-1 login"
+      class="fb-color btn btn-sm btn-outline-success col-md-1 login"
       v-if="!authorized" 
       @click="login">Login</button>
       <button
-      class="btn btn-sm btn-outline-success col-1 logout"
+      class="fb-color btn btn-sm btn-outline-success col-md-1 logout"
       v-else
       @click="logout" >Logout</button>
     </div>
@@ -146,13 +143,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  $facebook: #3b5998;
   button{
     cursor: pointer;
   }
-
-  // .collapse-enter-active, .collapse-leave, .collapse-enter-to{
-  //   height: 100%;
-
-  // }
+  .fb-color {
+    color: $facebook;
+    border-color: $facebook;
+    &:hover{
+      background-color: $facebook;
+      color: white;
+    }
+    &:focus {
+      webkit-box-shadow: 0 0 0 2px rgba(59, 89, 152, 0.5);
+      box-shadow: 0 0 0 2px rgba(59, 89, 152, 0.5);
+    }
+  }
 
 </style>

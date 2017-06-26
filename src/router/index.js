@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Hello from '@/views/Hello.vue'
+import Index from '@/views/index.vue'
 import Palette from '@/views/palette.vue'
 import NotFound from '@/views/notfound.vue'
 
@@ -11,8 +11,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Hello',
-      component: Hello
+      name: 'index',
+      component: Index
     },
     {
       path: '/palette',
