@@ -16,7 +16,7 @@
       </div>
 
       <div class="color-to-pick row justify-content-md-center align-items-center">
-        <div class="col-md-8">
+        <div class="col-md-6">
           <input type="color" v-model="pickColor.hexColor">
           <input type="text" placeholder="#FFFFFF" 
             v-model="pickColor.hexColor"
@@ -27,7 +27,7 @@
             @keyup.enter="enterHandler"
             >
         </div>
-        <div class="col-md-2">
+        <div class="col-md-1">
           <!-- 如果輸入的顏色不存在資料庫中，則新增 -->
           <button type="button"
             v-show="!checkSameColor"
@@ -43,7 +43,7 @@
         </div>
       </div>
     </div>
-    <div class="color-palette" v-show="colorPalette.length">
+    <div class="color-palette container" v-show="colorPalette.length">
       <ul>
         <li class="color-block" 
           v-for="item in colorPalette"
@@ -71,7 +71,6 @@ export default {
   name: 'palette',
   data () {
     return {
-      accessToken: null,
       pickColor: {
         hexColor: '',
         name: ''
@@ -83,6 +82,12 @@ export default {
     }
   },
   computed: {
+    credential () {
+      return {
+        accessToken: this.$store.state.credentialModule.accessToken || null,
+        authorized: this.$store.state.credentialModule.authorized || false
+      }
+    },
     verifyColor () {
       return /^#[0-9A-F]{6}$/i.test(this.pickColor.hexColor)
     },
@@ -94,8 +99,12 @@ export default {
       return exportContent
     },
     checkSameColor() {
-      let findColor = this.colorPalette.some(item => item.hexColor.toUpperCase() === this.pickColor.hexColor.toUpperCase());
-      return findColor;
+      let findColorIndex = this.colorPalette.findIndex(item => item.hexColor.toUpperCase() === this.pickColor.hexColor.toUpperCase())
+      if (findColorIndex !== -1 ) { 
+        this.pickColor.name = this.colorPalette[findColorIndex].name
+        return true
+      }
+      return false
     },
     localUnequalToSever () {
       let local = new Date(this.colorPaletteUpdatedAt).getTime()
@@ -115,6 +124,8 @@ export default {
           hue: hexToHsl(this.pickColor.hexColor)[0]
         })
         this.colorPalette.splice(0, 0, pickColor)
+        this.pickColor.hexColor = ''
+        this.pickColor.name = ''
       }
     },
     updateColor(){
@@ -128,6 +139,8 @@ export default {
         return
       }
       this.colorPalette.splice(colorIndex, 1, pickColor)
+      this.pickColor.hexColor = ''
+      this.pickColor.name = ''
     },
     showColor(hexColor, name) {
       this.pickColor.hexColor = hexColor
@@ -177,26 +190,27 @@ export default {
       let vm = this
       request.post(endpoint + '/palette/')
       .type('application/json')
-      .set({Authorization: vm.accessToken})
+      .set({Authorization: vm.credential.accessToken})
       .end((err, res) => {
         if (err) {
           this.$store.commit('emit/Alert', err)
         }
         let response = JSON.parse(res.text)
+        vm.colorPaletteOnCloudUpdatedAt = response.newPalette.updated_at
       })
     },
     getPaletteFromServer(){
       let vm = this
       request.get(endpoint + '/palette/')
       .type('application/json')
-      .set({Authorization: vm.accessToken})
+      .set({Authorization: vm.credential.accessToken})
       .end((err, res) => {
         if (err) {
           this.$store.commit('emit/Alert', err)
         }
         let response = JSON.parse(res.text)
         if (response.status === 400) {
-        // Palette 尚未建立
+          // Palette 尚未建立
           vm.createPaletteToServer()
         } else if (response.status === 200) {
           vm.colorPaletteOnCloud = response.colors
@@ -210,7 +224,7 @@ export default {
       let vm = this
       request.put(endpoint + '/palette')
       .type('application/json')
-      .set({Authorization: vm.accessToken})
+      .set({Authorization: vm.credential.accessToken})
       .send({colors: vm.colorPalette})
       .end((err, res) => {
         if (err) {
@@ -236,19 +250,22 @@ export default {
       localStorage.setItem('colorPalette', JSON.stringify(value))
       localStorage.setItem('paletteUpdateAt', new Date().toISOString())
       this.colorPaletteUpdatedAt = new Date().toISOString()
-      // this.$store.commit('emit/Flash', "已成功更新(本地）")
+      this.$store.commit('emit/Flash', "已成功更新(本地）")
+    },
+    credential (value) {
+      // 把 credential 放在 watch 中是要促發 computed 
+      if (value.authorized && value.accessToken) {
+        this.getPaletteFromServer()
+      }
     }
   },
   created () {
-    this.accessToken = 'Bearer ' + localStorage.getItem('token')
-    this.getPaletteFromServer()
     this.getPaletteFromLocalStorage()
     this.colorPalette = this.colorPalette.map(item => {
       return Object.assign({}, item, {
         hue: hexToHsl(item.hexColor)[0]
       })
     })
-
     // sort the color by hue
     this.colorPalette.sort((a, b) => (a.hue - b.hue) > 0 ? 1 : -1 )
   }
@@ -271,11 +288,35 @@ $disable: #CCC;
     button + button{
       margin-left: 10px;
     }
+    input[type="text"] {
+      
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 0.25rem;
+      line-height: 1.25rem;
+      outline: 0;
+      border: 1px solid $disable;
+
+      &::placeholder{
+        color: $disable;
+      }
+    }
+    input[type="color"] {
+      vertical-align: top;
+      border: 1px solid #CCC;
+      border-radius: 0.25rem;
+      height: 42px;
+      width: 42px;
+      background: transparent;
+      background-image: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
 }
 
-input[type="text"]::placeholder {
-  color: $disable
-}
+
+
+
 
 .export-or-save{
   margin-top: 30px;

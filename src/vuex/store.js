@@ -6,6 +6,21 @@ function generate (name) {
   }
 }
 
+const credentialModule = {
+  state: {
+    authorized: false,
+    accessToken: null
+  },
+  mutations: {
+    'refreshAuthorized/Credential': function (state, value) {
+      state.authorized = value
+    },
+    'refreshAccessToken/Credential': function (state, value) {
+      state.accessToken = `Bearer ${value}`
+    }
+  }
+}
+
 const alertModule = {
   state: {
     alert: {
@@ -55,7 +70,8 @@ const options = {
   },
 
   modules: {
-    alertModule
+    alertModule,
+    credentialModule
   }
 
 }

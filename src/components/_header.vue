@@ -68,9 +68,14 @@ export default {
          * If get token successfully, save in localStorage
          **/
         if (response.token) {
-          localStorage.setItem('token', response.token)
+          localStorage.setItem('token', `Bearer ${response.token}`)
+          vm.$store.commit('refreshAccessToken/Credential', response.token)
         }
       })
+    },
+    changeAuthorizedStatus (status) {
+      this.authorized = status
+      this.$store.commit('refreshAuthorized/Credential', status)
     },
     /**
      * Facebook SDK for Login
@@ -102,19 +107,19 @@ export default {
     statusChangeCallback (response) {
       let vm = this
       if (response.status === 'connected') {
-        vm.authorized = true
         vm.$store.commit('emit/Flash', "登入成功")
+        vm.changeAuthorizedStatus(true)
         vm.getProfile(response.authResponse)
       } else if (response.status === 'not_authorized') {
         vm.$store.commit('emit/Flash', "尚未授權本應用程式")
-        vm.authorized = false
+        vm.changeAuthorizedStatus(false)
       } else if (response.status === 'unknown') {
         vm.$store.commit('emit/Flash', "登出成功")
         vm.profile = {}
-        vm.authorized = false
+        vm.changeAuthorizedStatus(false)
       } else {
         vm.$store.commit('emit/Flash', "尚未登入")
-        vm.authorized = false
+        vm.changeAuthorizedStatus(false)
       }
     }
   },
