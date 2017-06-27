@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>建立自己的色票檔(color palette)</h1>
+    <h1>Save Whatever Color You Like</h1>
     <hr>
     <div class="enter-color container">
 
@@ -8,11 +8,11 @@
         <button type="button"
           :class="['btn', 'col-md-2',{'btn-outline-secondary': !colorPalette.length},{'btn-outline-primary': colorPalette.length}]"
           @click.prevent.stop="exportPalette"
-        >匯出色票</button>
+        >{{ words.view.export }}</button>
         <button type="button"
           :class="['btn', 'col-md-2',{'btn-outline-secondary': !localUnequalToSever},{'btn-outline-primary': localUnequalToSever}]"
           @click.prevent.stop="savePaletteToServer"
-        >儲存雲端</button>
+        >{{ words.view.save }}</button>
       </div>
 
       <div class="color-to-pick row justify-content-md-center align-items-center">
@@ -33,13 +33,13 @@
             v-show="!checkSameColor"
             :class="['btn', {'btn-outline-secondary': !verifyColor}, {'btn-outline-primary': verifyColor}]" 
             @click.prevent.stop="addColor"
-            >新增</button>
+            >{{ words.view.save }}</button>
           <!-- 如果輸入的顏色存在資料庫中，則更新 -->
           <button type="button"
             v-show="checkSameColor"
             :class="['btn',{'btn-outline-secondary': !verifyColor}, {'btn-outline-primary': verifyColor}]" 
             @click.prevent.stop="updateColor"
-            >更新</button>
+            >{{ words.view.update }}</button>
         </div>
       </div>
     </div>
@@ -63,7 +63,7 @@
 <script>
 import hexToHsl from 'hex-to-hsl'
 import request from 'superagent'
-let endpoint = 'http://localhost:3000/v1.0'
+let endpoint = 'https://simple-webapps.herokuapp.com'
 
 
 
@@ -78,7 +78,26 @@ export default {
       colorPalette: [],
       colorPaletteUpdatedAt: '',
       colorPaletteOnCloud: [],
-      colorPaletteOnCloudUpdatedAt: ''
+      colorPaletteOnCloudUpdatedAt: '',
+      words: {
+        view: {
+          export: 'Export',
+          save: 'Save',
+          add: 'Add',
+          update: 'Update'
+        },
+        controller: {
+          invalidHexColor: 'Invalid Hex Colors',
+          alreadySetColor: 'This color has already set.',
+          colorNotFound: 'can not find the color in updateColor()',
+          successful: 'successful',
+          failed: 'failed',
+          copiedToClipboard: 'Copied to clipboard',
+          somethingWrong: 'Oops!! Something go wrong',
+          saveOnCloudSuccess: 'Save on cloud successful',
+          autoUpdatedSuccessLocal: 'Auto updated successful in local'
+        }
+      }
     }
   },
   computed: {
@@ -115,9 +134,9 @@ export default {
   methods: {
     addColor() {
       if (!this.verifyColor) {
-        this.$store.commit('emit/Alert', "並非有效的色碼")
+        this.$store.commit('emit/Alert', this.words.controller.invalidHexColor)
       } else if (this.checkSameColor) {
-        this.$store.commit('emit/Alert', "此顏色已設定過")
+        this.$store.commit('emit/Alert', this.words.controller.alreadySetColor)
       } else {
         let pickColor = Object.assign({}, this.pickColor, {
           hexColor: this.pickColor.hexColor.toUpperCase(),
@@ -135,7 +154,7 @@ export default {
       })
 
       if(colorIndex === -1) {
-        this.$store.commit('emit/Alert', 'can not find the color in updateColor()')
+        this.$store.commit('emit/Alert', this.words.controller.colorNotFound)
         return
       }
       this.colorPalette.splice(colorIndex, 1, pickColor)
@@ -159,10 +178,10 @@ export default {
       try {
         // Now that we've selected the anchor text, execute the copy command  
         let successful = document.execCommand('copy')
-        let msg = successful ? '成功' : '失敗'
-        this.$store.commit('emit/Flash', "複製到剪貼簿" + msg)
+        let msg = successful ? this.words.controller.successful : this.words.controller.failed
+        this.$store.commit('emit/Flash', this.words.controller.copiedToClipboard + ' ' + msg)
       } catch(err) {
-        this.$store.commit('emit/Flash', "糟糕！發生了錯誤！")
+        this.$store.commit('emit/Flash', this.words.controller.somethingWrong)
       }
 
       /* unselect the range */
@@ -236,7 +255,7 @@ export default {
           vm.colorPaletteUpdatedAt = response.updated_at
           vm.colorPaletteOnCloudUpdatedAt = response.updated_at
           localStorage.setItem('paletteUpdateAt', response.updated_at)
-          vm.$store.commit('emit/Flash', "儲存成功（雲端）")
+          vm.$store.commit('emit/Flash', this.words.controller.saveOnCloudSuccess)
         } else {
           vm.$store.commit('emit/Alert', `Error occurred in savePaletteToServer in palette.vue(${response.message})`)
         }
@@ -250,7 +269,7 @@ export default {
       localStorage.setItem('colorPalette', JSON.stringify(value))
       localStorage.setItem('paletteUpdateAt', new Date().toISOString())
       this.colorPaletteUpdatedAt = new Date().toISOString()
-      this.$store.commit('emit/Flash', "已成功更新(本地）")
+      this.$store.commit('emit/Flash', this.words.controller.autoUpdatedSuccessLocal)
     },
     credential (value) {
       // 把 credential 放在 watch 中是要促發 computed 

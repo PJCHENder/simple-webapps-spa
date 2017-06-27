@@ -32,7 +32,7 @@
 <script>
 import request from 'superagent'
 
-let endpoint = 'http://localhost:3000/v1.0'
+let endpoint = 'https://simple-webapps.herokuapp.com'
 
 export default {
   data () {
@@ -40,6 +40,14 @@ export default {
       profile: {},
       authorized: false,
       navActive: false,
+      words: {
+        controller: {
+          loginSuccess: 'Login Successful',
+          logoutSuccess: 'Logout Successful',
+          unauthorized: 'This app has not been authorized.',
+          notLogin: 'Not login yet.'
+        }
+      }
     }
   },
   methods:{
@@ -104,18 +112,18 @@ export default {
     statusChangeCallback (response) {
       let vm = this
       if (response.status === 'connected') {
-        vm.$store.commit('emit/Flash', "登入成功")
+        vm.$store.commit('emit/Flash', this.words.controller.loginSuccess)
         vm.changeAuthorizedStatus(true)
         vm.getProfile(response.authResponse)
       } else if (response.status === 'not_authorized') {
-        vm.$store.commit('emit/Flash', "尚未授權本應用程式")
+        vm.$store.commit('emit/Flash', this.words.controller.unauthorized)
         vm.changeAuthorizedStatus(false)
       } else if (response.status === 'unknown') {
-        vm.$store.commit('emit/Flash', "登出成功")
+        vm.$store.commit('emit/Flash', this.words.controller.logoutSuccess)
         vm.profile = {}
         vm.changeAuthorizedStatus(false)
       } else {
-        vm.$store.commit('emit/Flash', "尚未登入")
+        vm.$store.commit('emit/Flash', this.words.controller.notLogin)
         vm.changeAuthorizedStatus(false)
       }
     }
