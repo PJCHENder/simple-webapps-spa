@@ -63,7 +63,7 @@
 <script>
 import hexToHsl from 'hex-to-hsl'
 import request from 'superagent'
-let endpoint = 'https://simple-webapps.herokuapp.com'
+let endpoint = 'https://simple-webapps.herokuapp.com/v1.0'
 
 
 
