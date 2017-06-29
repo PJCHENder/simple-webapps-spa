@@ -10,7 +10,7 @@
           @click.prevent.stop="exportPalette"
         >{{ words.view.export }}</button>
         <button type="button"
-          :class="['btn', 'col-md-2',{'btn-outline-secondary': !localUnequalToSever},{'btn-outline-primary': localUnequalToSever}]"
+          :class="['btn', 'col-md-2',{'btn-outline-secondary': !localNewerThenSever},{'btn-outline-primary': localNewerThenSever}]"
           @click.prevent.stop="savePaletteToServer"
         >{{ words.view.save }}</button>
       </div>
@@ -25,6 +25,7 @@
           <input type="text" placeholder="variable name" 
             v-model="pickColor.name"
             @keyup.enter="enterHandler"
+            @input="findColor"
             >
         </div>
         <div class="col-md-1">
@@ -125,7 +126,7 @@ export default {
       }
       return false
     },
-    localUnequalToSever () {
+    localNewerThenSever () {
       let local = new Date(this.colorPaletteUpdatedAt).getTime()
       let server = new Date(this.colorPaletteOnCloudUpdatedAt).getTime()
       return (local > server) ? true : false
@@ -147,7 +148,13 @@ export default {
         this.pickColor.name = ''
       }
     },
-    updateColor(){
+    findColor () {
+      this.colorPalette = this.colorPalette.filter(color => {
+        let regex = new RegExp(this.pickColor.name, 'gi')
+        return color.name.match(regex)
+      })
+    },
+    updateColor () {
       let colorIndex = this.colorPalette.findIndex(item => item.hexColor.toUpperCase() === this.pickColor.hexColor.toUpperCase());
       let pickColor = Object.assign({}, this.pickColor, {
         name: this.pickColor.name
@@ -234,6 +241,12 @@ export default {
         } else if (response.status === 200) {
           vm.colorPaletteOnCloud = response.colors
           vm.colorPaletteOnCloudUpdatedAt = response.updated_at
+
+          if (!localNewerThenSever) {
+            // 如果 server 的資料比較新（或 local 不存在）
+            vm.colorPalette = response.colors || []
+            vm.colorPaletteUpdatedAt = response.updated_at || ''
+          }
         } else {
           this.$store.commit('emit/Alert', "Error in getPaletteFromServer in Palette.vue")
         }

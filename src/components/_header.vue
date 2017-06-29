@@ -161,6 +161,7 @@ export default {
     &:hover{
       background-color: $facebook;
       color: white;
+      border: 0;
     }
     &:focus {
       webkit-box-shadow: 0 0 0 2px rgba(59, 89, 152, 0.5);
