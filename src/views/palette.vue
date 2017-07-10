@@ -77,8 +77,7 @@
 <script>
 import hexToHsl from 'hex-to-hsl'
 import request from 'superagent'
-
-let endpoint = process.env.NODE_ENV ? 'https://simple-webapps.herokuapp.com/v1.0' : 'http://localhost:3000/v1.0'
+let endpoint = (process.env.NODE_ENV === "production") ? 'https://simple-webapps.herokuapp.com/v1.0' : 'http://localhost:3000/v1.0'
 
 export default {
   name: 'palette',
@@ -243,13 +242,13 @@ export default {
         // #4-1: facebook 已登入 > localStorage 曾建立 > 存取 localStorage 的資料
         // #4-3: facebook 未登入 > localStorage 曾建立 > 存取 localStorage 的資料
         this.colorPalette = JSON.parse(localStorage.getItem('colorPalette'))
-        this.colorPaletteUpdatedAt = localStorage.getItem('paletteUpdateAt')
+        this.colorPaletteUpdatedAt = localStorage.getItem('paletteUpdatedAt')
         this.localStorageIsExist = true
       }
     },
     savePaletteToLocalStorage (value = []) {
       localStorage.setItem('colorPalette', JSON.stringify(value))
-      localStorage.setItem('paletteUpdateAt', new Date().toISOString())
+      localStorage.setItem('paletteUpdatedAt', new Date().toISOString())
       this.colorPaletteUpdatedAt = new Date().toISOString()
       this.localStorageIsExist = true
       this.$store.commit('emit/Flash', this.words.controller.autoUpdatedSuccessLocal)
@@ -316,7 +315,7 @@ export default {
         if (response.status === 200) {
           vm.colorPaletteUpdatedAt = response.updated_at
           vm.colorPaletteOnCloudUpdatedAt = response.updated_at
-          localStorage.setItem('paletteUpdateAt', response.updated_at)
+          localStorage.setItem('paletteUpdatedAt', response.updated_at)
           vm.$store.commit('emit/Flash', this.words.controller.saveOnCloudSuccess)
         } else {
           vm.$store.commit('emit/Alert', `Error occurred in savePaletteToServer in palette.vue(${response.message})`)
@@ -416,6 +415,7 @@ $disable: #CCC;
       list-style: none;
       font-size: 0px;
       display: flex;
+      flex-wrap: wrap;
     }
 
     .search-input {

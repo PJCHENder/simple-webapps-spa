@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header-partial></header-partial>
-    <img src="./assets/logo.png">
+    <!--<img src="./assets/logo.png">-->
     <router-view></router-view>
     <alert></alert>
   </div>
@@ -13,7 +13,7 @@ import HeaderPartial from '@/components/_header.vue'
 
 export default {
   name: 'app',
-  components: { Alert,  HeaderPartial}
+  components: { Alert,  HeaderPartial }
 }
 </script>
 

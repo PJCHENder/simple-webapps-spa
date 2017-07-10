@@ -32,7 +32,7 @@
 <script>
 import request from 'superagent'
 
-let endpoint = process.env.NODE_ENV ? 'https://simple-webapps.herokuapp.com/v1.0' : 'http://localhost:3000/v1.0'
+let endpoint = (process.env.NODE_ENV === 'production') ? 'https://simple-webapps.herokuapp.com/v1.0' : 'http://localhost:3000/v1.0'
 
 export default {
   data () {

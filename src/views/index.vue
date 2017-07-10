@@ -3,6 +3,7 @@
     <h1>Current Web Apps Provided</h1>
     <ul>
       <li><router-link to="/palette">Palette</router-link></li>
+      <li><router-link to="/mindful-timer">MindfulTimer</router-link></li>
     </ul>
     <!--
     <h2>Essential Links</h2>
