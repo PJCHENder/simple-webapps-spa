@@ -5,7 +5,7 @@
     >
       <span class="navbar-toggler-icon"></span>
     </button>
-    <a class="navbar-brand" href="#">Simple WebApps</a>
+    <a class="navbar-brand" href="/">Simple WebApps</a>
 
     <div class="navbar-collapse"
       v-show="navActive">

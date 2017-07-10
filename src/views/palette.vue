@@ -1,5 +1,6 @@
 <template>
   <div>
+    <img src="./../assets/image/color_palette.png" alt="color-palette" class="color-palette-img img-fluid mt-3 mb-3">
     <h1>Save Whatever Color You Like</h1>
     <hr>
     <div class="enter-color container">
@@ -322,6 +323,13 @@ export default {
         }
 
       })
+    },
+    changeFavicon () {
+      var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+      link.type = 'image/x-icon';
+      link.rel = 'shortcut icon';
+      link.href = '/static/color_palette.ico';
+      document.getElementsByTagName('head')[0].appendChild(link);
     }
   },
   watch: {
@@ -344,6 +352,7 @@ export default {
     }
   },
   created () {
+    this.changeFavicon()
     // #1-2 向 localStorage 要資料
     this.getPaletteFromLocalStorage()
     
@@ -362,6 +371,11 @@ export default {
 <style lang="scss" scoped>
 $red: #C63647;
 $disable: #CCC;
+
+.color-palette-img {
+  width: 200px;
+  height: 200px;
+}
 
 .enter-color {
     display: inline-block;

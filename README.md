@@ -2,6 +2,10 @@
 
 > A Vue.js project
 
+# Contribute
+
+- Favicon of [MindfulTimer]((https://www.iconfinder.com/icons/1055043/hourglass_time_timer_icon#size=128)) and [Palette]((https://www.iconfinder.com/icons/1054963/palette_swatches_icon#size=128)) are downloaded from iconfinder and credited by Nick Roach
+
 ## Build Setup
 
 ``` bash
