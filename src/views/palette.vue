@@ -13,7 +13,7 @@
         <button type="button"
           :class="['btn', 'col-md-2',{'btn-outline-secondary': equalLocalAndServer},{'btn-outline-primary': !equalLocalAndServer}]"
           @click.prevent.stop="savePaletteToServer"
-        >{{ words.view.save }}</button>
+        >{{ words.view.saveOnCloud }}</button>
       </div>
 
       <div class="color-to-pick row justify-content-md-center align-items-center">
@@ -98,6 +98,7 @@ export default {
         view: {
           export: 'Export',
           save: 'Save',
+          saveOnCloud: 'Save on Cloud',
           add: 'Add',
           update: 'Update'
         },
@@ -371,6 +372,7 @@ export default {
 <style lang="scss" scoped>
 $red: #C63647;
 $disable: #CCC;
+$input-border: #0275d8;
 
 .color-palette-img {
   width: 200px;
@@ -390,18 +392,22 @@ $disable: #CCC;
       margin-left: 10px;
     }
     input[type="text"] {
-      
+      height: 42px;
       padding: 0.5rem 1rem;
       font-size: 1rem;
       border-radius: 0.25rem;
       line-height: 1.25rem;
       outline: 0;
       border: 1px solid $disable;
-
+      &:focus{
+        border-color: $input-border;
+        box-shadow: 0 0 0.3rem rgba(2,117,216,.27);
+      }
       &::placeholder{
         color: $disable;
       }
     }
+
     input[type="color"] {
       vertical-align: top;
       border: 1px solid #CCC;
@@ -439,8 +445,13 @@ $disable: #CCC;
       border-radius: 0.25rem;
       line-height: 1.25rem;
       outline: 0;
-      border: 1px solid #CCC;
+      border: 1px solid $disable;
       margin: 20px auto;
+
+      &:focus{
+        box-shadow: 0 0 0.3rem rgba(2,117,216,.27);
+        border-color: $input-border;
+      }
 
       &::placeholder {
         color: $disable;
