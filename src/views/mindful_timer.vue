@@ -46,12 +46,12 @@
           </transition>
 
             <div class="row no-gutters">
-                <button type="button" class="btn btn-outline-primary btn-block" id="clocking" 
+                <button type="button" class="btn btn-outline-primary btn-block" id="clocking"
                   @click.prevent.stop="startHandler"
-                  
+
                   v-show="!restTimeString"
                   >Start</button>
-                <button type="button" class="btn btn-outline-primary btn-block" id="reset" 
+                <button type="button" class="btn btn-outline-primary btn-block" id="reset"
                   @click.prevent.stop="resetTimer"
                   v-show="restTimeString"
                   >Reset</button>
@@ -66,16 +66,18 @@
         </div>
 
         <div class="note">
-            <textarea class="form-control" id="note" v-model="noteContent"></textarea>
+          <!-- FIXME: -->
+            <div v-show="isShowMarkDown" v-html="compiledMarkdown" class="form-control" @click.stop.prevent="toggleMarkDown(isShowMarkDown)"></div>
+            <textarea v-show="!isShowMarkDown" class="form-control" id="note" v-model="noteContent" @blur.stop.prevent="toggleMarkDown(isShowMarkDown)"></textarea>
             <p class="copyright"> <a href="https://pjchender.blogspot.com" target="_blank">PJCHENder</a> </p>
         </div>
-
     </div>
   </div>
 </template>
 
 <script>
 import request from 'superagent'
+import marked from 'marked'
 
 let endpoint = (process.env.NODE_ENV === "production") ? 'https://simple-webapps.herokuapp.com/v1.0' : 'http://localhost:3000/v1.0'
 
@@ -112,10 +114,14 @@ export default {
       noteUpdatedAt: '',
       noteOnCloud: '',
       noteOnCloudUpdatedAt: '',
-      localStorageIsExist: false
+      localStorageIsExist: false,
+      isShowMarkDown: true
     }
   },
   computed: {
+    compiledMarkdown: function () {
+      return marked(this.noteContent, { sanitize: true })
+    },
     // 剩餘時間（字串）
     restTimeString () {
       if (this.restMs < 0 || !this.restMs) {return false}
@@ -150,6 +156,14 @@ export default {
     }
   },
   methods: {
+    toggleMarkDown (isShowMarkDown) {
+      this.isShowMarkDown = !isShowMarkDown
+      if (isShowMarkDown) {
+        this.$nextTick(function () {
+          document.getElementById('note').focus()
+        })
+      }
+    },
     //  將分鐘數轉為毫秒
     min2ms (minutes) {
       return minutes * 60 * 1000
@@ -246,7 +260,7 @@ export default {
           console.log('response', response)
           vm.noteOnCloud = response.note
           vm.noteOnCloudUpdatedAt = response.updated_at
-          
+
           if (vm.localStorageIsExist) {
             // #4-1 存取 localStorage 的資料
             // vm.saveNoteToServer()
@@ -274,7 +288,7 @@ export default {
           vm.$store.commit('emit/Alert', `Error occurred in saveNoteToServer in mindful_timer.vue(${err})`)
         }
         let response = JSON.parse(res.text)
-        
+
         if (response.status === 200) {
           vm.noteUpdatedAt = response.updated_at
           vm.noteOnCloudUpdatedAt = response.updated_at
@@ -345,6 +359,7 @@ export default {
     margin-left: 15px;
     .form-control{
       height: 100%;
+      text-align: left;
     }
 
     .copyright {
