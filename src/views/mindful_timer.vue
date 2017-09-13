@@ -1,12 +1,6 @@
 <template>
   <div class="wrapper">
 
-    <div class="fork-me">
-      <a href="https://github.com/PJCHENder/MindfulTimer">
-          <img style="position: absolute; top: 0; left: 0; border: 0; z-index: 1;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png">
-      </a>
-    </div>
-
     <div class="col-3 alert alert-success text-center" role="alert">
         Saved Successfully
     </div>
@@ -66,8 +60,8 @@
         </div>
 
         <div class="note">
-            <div v-show="isShowMarkDown" v-html="compiledMarkdown" class="form-control" @click.stop.prevent="toggleMarkDown(isShowMarkDown)"></div>
-            <textarea v-show="!isShowMarkDown" class="form-control" id="note" v-model="noteContent" @blur.stop.prevent="toggleMarkDown(isShowMarkDown)"></textarea>
+            <div v-show="isShowMarkDown" v-html="compiledMarkdown" class="form-control" id="preview" @click.stop.prevent="toggleMarkDown(isShowMarkDown, $event)"></div>
+            <textarea v-show="!isShowMarkDown" class="form-control" id="note" v-model="noteContent" @blur.stop.prevent="toggleMarkDown(isShowMarkDown, $event)"></textarea>
             <p class="copyright"> <a href="https://pjchender.blogspot.com" target="_blank">PJCHENder</a> </p>
         </div>
     </div>
@@ -155,13 +149,35 @@ export default {
     }
   },
   methods: {
-    toggleMarkDown (isShowMarkDown) {
+    toggleMarkDown (isShowMarkDown, e) {
+
+      /**
+       * 如果在 markdown 是超連結，則可以直接另開視窗
+      **/
+      if (e.target.tagName === 'A') {
+        window.open(e.target.href, '_blank')
+        return
+      }
+
       this.isShowMarkDown = !isShowMarkDown
+
       if (isShowMarkDown) {
         this.$nextTick(function () {
-          document.getElementById('note').focus()
+
+          /**
+           * 透過 setSelectionRange 讓滑鼠游標移到點擊的字上面
+           * 透過先 blur 接著 focus 可以讓 textarea 移到滑鼠游標的位置
+          **/
+          let note = document.getElementById('note')
+          let cursorPosition = note.value.indexOf(e.target.textContent)
+
+          note.setSelectionRange(cursorPosition, cursorPosition)
+          note.blur()
+          note.focus()
+
         })
       }
+
     },
     //  將分鐘數轉為毫秒
     min2ms (minutes) {
@@ -356,9 +372,12 @@ export default {
     margin-top: 50px;
     margin-bottom: 50px;
     margin-left: 15px;
+
     .form-control{
       height: 100%;
       text-align: left;
+      overflow: auto;
+      white-space: pre-wrap;
     }
 
     .copyright {
