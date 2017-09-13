@@ -24,7 +24,7 @@
             v-model="pickColor.hexColor"
             @keyup.enter="enterHandler"
             >
-          <input type="text" placeholder="variable name" 
+          <input type="text" placeholder="variable name"
             v-model="pickColor.name"
             @keyup.enter="enterHandler"
             >
@@ -33,48 +33,48 @@
           <!-- 如果輸入的顏色不存在資料庫中，則新增 -->
           <button type="button"
             v-show="!checkSameColor"
-            :class="['btn', {'btn-outline-secondary': !verifyColor}, {'btn-outline-primary': verifyColor}]" 
+            :class="['btn', {'btn-outline-secondary': !verifyColor}, {'btn-outline-primary': verifyColor}]"
             @click.prevent.stop="addColor"
             >{{ words.view.save }}</button>
           <!-- 如果輸入的顏色存在資料庫中，則更新 -->
           <button type="button"
             v-show="checkSameColor"
-            :class="['btn',{'btn-outline-secondary': !verifyColor}, {'btn-outline-primary': verifyColor}]" 
+            :class="['btn',{'btn-outline-secondary': !verifyColor}, {'btn-outline-primary': verifyColor}]"
             @click.prevent.stop="updateColor"
             >{{ words.view.update }}</button>
         </div>
       </div>
     </div>
 
-    
+
     <div class="color-palette container" v-show="colorPalette.length">
       <div class="row">
         <div class="col-12">
-          <input type="text" class="search-input" placeholder="Search by Variable Name" 
+          <input type="text" class="search-input" placeholder="Search by Variable Name"
             v-model="searchColor"
           >
         </div>
       </div>
       <div class="row justify-content-start">
-        
+
           <ul class="col-12">
-            <li class="color-block" 
+            <li class="color-block"
               v-for="item in visibleColorPalette"
               :key="item.hexColor"
-              :style="{'background-color': item.hexColor}" 
+              :style="{'background-color': item.hexColor}"
               @click.prevent.stop="showColor(item.hexColor, item.name)">
-                <span 
+                <span
                 class="delete-color"
                 @click.prevent.stop="deleteColor(item.hexColor)">X</span>
             </li>
           </ul>
-        
+
       </div>
     </div>
     <textarea hidden id="contentToExport" v-model="contentToExport"></textarea>
   </div>
 </template>
- 
+
 <script>
 import hexToHsl from 'hex-to-hsl'
 import request from 'superagent'
@@ -148,7 +148,7 @@ export default {
     },
     checkSameColor() {
       let findColorIndex = this.colorPalette.findIndex(item => item.hexColor.toUpperCase() === this.pickColor.hexColor.toUpperCase())
-      if (findColorIndex !== -1 ) { 
+      if (findColorIndex !== -1 ) {
         this.pickColor.name = this.colorPalette[findColorIndex].name
         return true
       }
@@ -201,8 +201,11 @@ export default {
       this.pickColor.name = name
     },
     deleteColor(hexColor){
-      let deleteColorIndex = this.colorPalette.findIndex(item => item.hexColor.toUpperCase() === hexColor.toUpperCase())
-      this.colorPalette.splice(deleteColorIndex, 1)
+      isConfirm = window.confirm('確定刪除？')
+      if (isConfirm) {
+        let deleteColorIndex = this.colorPalette.findIndex(item => item.hexColor.toUpperCase() === hexColor.toUpperCase())
+        this.colorPalette.splice(deleteColorIndex, 1)
+      }
     },
     exportPalette(){
       // 複製 SCSS 色票到剪貼簿
@@ -211,7 +214,7 @@ export default {
       contentToExport.select()
 
       try {
-        // Now that we've selected the anchor text, execute the copy command  
+        // Now that we've selected the anchor text, execute the copy command
         let successful = document.execCommand('copy')
         let msg = successful ? this.words.controller.successful : this.words.controller.failed
         this.$store.commit('emit/Flash', this.words.controller.copiedToClipboard + ' ' + msg)
@@ -287,7 +290,7 @@ export default {
         } else if (response.status === 200) {
           vm.colorPaletteOnCloud = response.colors
           vm.colorPaletteOnCloudUpdatedAt = response.updated_at
-          
+
           if (vm.localStorageIsExist) {
             // #4-1 存取 localStorage 的資料
             // vm.savePaletteToServer()
@@ -313,7 +316,7 @@ export default {
           vm.$store.commit('emit/Alert', `Error occurred in savePaletteToServer in palette.vue(${err})`)
         }
         let response = JSON.parse(res.text)
-        
+
         if (response.status === 200) {
           vm.colorPaletteUpdatedAt = response.updated_at
           vm.colorPaletteOnCloudUpdatedAt = response.updated_at
@@ -356,13 +359,13 @@ export default {
     this.changeFavicon()
     // #1-2 向 localStorage 要資料
     this.getPaletteFromLocalStorage()
-    
+
     this.colorPalette = this.colorPalette.map(item => {
       return Object.assign({}, item, {
         hue: hexToHsl(item.hexColor)[0]
       })
     })
-    
+
     // sort the color by hue
     this.colorPalette.sort((a, b) => (a.hue - b.hue) > 0 ? 1 : -1 )
   }
@@ -480,7 +483,7 @@ $input-border: #0275d8;
             opacity: 0;
             transition: 0.3s;
         }
-        
+
         &:hover .delete-color {
             opacity: 1;
         }

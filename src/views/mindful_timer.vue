@@ -66,7 +66,6 @@
         </div>
 
         <div class="note">
-          <!-- FIXME: -->
             <div v-show="isShowMarkDown" v-html="compiledMarkdown" class="form-control" @click.stop.prevent="toggleMarkDown(isShowMarkDown)"></div>
             <textarea v-show="!isShowMarkDown" class="form-control" id="note" v-model="noteContent" @blur.stop.prevent="toggleMarkDown(isShowMarkDown)"></textarea>
             <p class="copyright"> <a href="https://pjchender.blogspot.com" target="_blank">PJCHENder</a> </p>
