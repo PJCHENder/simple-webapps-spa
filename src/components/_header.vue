@@ -17,9 +17,9 @@
           <a class="nav-link" href="https://www.facebook.com/pjchender/" target="_blank">Facebook</a>
         </li>
       </ul>
-      <button 
+      <button
       class="fb-color btn btn-sm btn-outline-success col-md-1 login"
-      v-if="!authorized" 
+      v-if="!authorized"
       @click="login">Login</button>
       <button
       class="fb-color btn btn-sm btn-outline-success col-md-1 logout"
@@ -67,6 +67,7 @@ export default {
       .end((err, res) => {
         if (err) {
           console.error(err)
+          return
         }
         let response = JSON.parse(res.text)
         /**

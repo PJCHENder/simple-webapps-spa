@@ -19,7 +19,7 @@
             <div class="set_time form-group row no-gutters">
               <label for="set_time" class="col-4 col-form-label">設定分鐘</label>
               <div class="col-8">
-                <input class="form-control" type="number" id="set_time" placeholder="20" v-model="setTaskTime">
+                <input class="form-control" type="number" id="set_time" placeholder="20" min="0" max="60" v-model="setTaskTime">
               </div>
             </div>
           </div>
@@ -158,16 +158,13 @@ export default {
            * 透過 setSelectionRange 讓滑鼠游標移到點擊的字上面
            * 透過先 blur 接著 focus 可以讓 textarea 移到滑鼠游標的位置
           **/
-          let note = document.getElementById('note')
-          let cursorPosition = note.value.indexOf(e.target.textContent)
-
-          note.setSelectionRange(cursorPosition, cursorPosition)
-          note.blur()
-          note.focus()
-
+          let textarea = document.getElementById('textarea')
+          let cursorPosition = textarea.value.indexOf(e.target.textContent)
+          textarea.setSelectionRange(cursorPosition, cursorPosition)
+          textarea.blur()
+          textarea.focus()
         })
       }
-
     },
     //  將分鐘數轉為毫秒
     min2ms (minutes) {
@@ -185,7 +182,9 @@ export default {
     },
     startHandler () {
       this.startTimer()
-      this.saveNoteToServer()
+      if (this.credential.authorized) {
+        this.saveNoteToServer()
+      }
     },
     // 更新剩餘時間
     refreshRestTime () {
@@ -239,6 +238,7 @@ export default {
         .end((err, res) => {
           if (err) {
             this.$store.commit('emit/Alert', err)
+            return
           }
           let response = JSON.parse(res.text)
           vm.noteOnCloudUpdatedAt = response.newNote.updated_at
@@ -252,6 +252,7 @@ export default {
         .end((err, res) => {
           if (err) {
             this.$store.commit('emit/Alert', err)
+            return
           }
           let response = JSON.parse(res.text)
           if (response.status === 400) {
@@ -284,6 +285,7 @@ export default {
         .end((err, res) => {
           if (err) {
             vm.$store.commit('emit/Alert', `Error occurred in saveNoteToServer in mindful_timer.vue(${err})`)
+            return
           }
           let response = JSON.parse(res.text)
 

@@ -11,6 +11,7 @@
           @click.prevent.stop="exportPalette"
         >{{ words.view.export }}</button>
         <button type="button"
+          v-if="credential.authorized"
           :class="['btn', 'col-md-2',{'btn-outline-secondary': equalLocalAndServer},{'btn-outline-primary': !equalLocalAndServer}]"
           @click.prevent.stop="savePaletteToServer"
         >{{ words.view.saveOnCloud }}</button>
@@ -269,6 +270,7 @@ export default {
       .end((err, res) => {
         if (err) {
           this.$store.commit('emit/Alert', err)
+          return
         }
         let response = JSON.parse(res.text)
         vm.colorPaletteOnCloudUpdatedAt = response.newPalette.updated_at
@@ -282,6 +284,7 @@ export default {
       .end((err, res) => {
         if (err) {
           this.$store.commit('emit/Alert', err)
+          return
         }
         let response = JSON.parse(res.text)
         if (response.status === 400) {
@@ -314,6 +317,7 @@ export default {
       .end((err, res) => {
         if (err) {
           vm.$store.commit('emit/Alert', `Error occurred in savePaletteToServer in palette.vue(${err})`)
+          return
         }
         let response = JSON.parse(res.text)
 
