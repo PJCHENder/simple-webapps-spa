@@ -202,7 +202,7 @@ export default {
       this.pickColor.name = name
     },
     deleteColor(hexColor){
-      isConfirm = window.confirm('確定刪除？')
+      let isConfirm = window.confirm('確定刪除？')
       if (isConfirm) {
         let deleteColorIndex = this.colorPalette.findIndex(item => item.hexColor.toUpperCase() === hexColor.toUpperCase())
         this.colorPalette.splice(deleteColorIndex, 1)
