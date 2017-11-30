@@ -105,7 +105,11 @@ export default {
   },
   computed: {
     compiledMarkdown: function () {
-      return marked(this.noteContent, { sanitize: true })
+      if (this.noteContent.length !== 0) {
+        return marked(this.noteContent, { sanitize: true })
+      } else {
+        return
+      }
     },
     // 剩餘時間（字串）
     restTimeString () {
